@@ -1904,6 +1904,32 @@ const JOKES = [
   { id:"n060", src:"網路精選", cat:"腦筋急轉彎", q:"哪種動物最喜歡看書？", a:"書蟲——名字都叫書蟲了。" },
 ];
 
+// ── 收藏整理：避免評分時重複或近似 ────────────────────────────
+// 保留原始資料與 ID，避免影響既有收藏／評分紀錄；只從評分佇列排除重複項。
+const NEAR_DUPLICATE_IDS = new Set([
+  'fs005','fs006','fs013','fs020','fs029','fs030','c020','t034','aa035'
+]);
+
+function normalizeJokeText(text){
+  return String(text||'').normalize('NFKC').toLowerCase().replace(/[\s\p{P}]/gu,'');
+}
+
+function buildCuratedJokes(jokes){
+  const seenQuestions=new Set();
+  const seenJokes=new Set();
+  return jokes.filter(joke=>{
+    if(NEAR_DUPLICATE_IDS.has(joke.id)) return false;
+    const question=normalizeJokeText(joke.q);
+    const signature=`${question}|${normalizeJokeText(joke.a)}`;
+    if(!question||seenQuestions.has(question)||seenJokes.has(signature)) return false;
+    seenQuestions.add(question);
+    seenJokes.add(signature);
+    return true;
+  });
+}
+
+const CURATED_JOKES = buildCuratedJokes(JOKES);
+
 // ── API ───────────────────────────────────────────────────────
 async function apiGet(action){
   const res = await fetch(`${API}?action=${action}&_=${Date.now()}`);
@@ -1934,7 +1960,7 @@ async function init(){
     })).filter(r=>r.id);
     rejected = new Set((rejectedData||[]).map(s=>String(s).trim()));
     const likedIds = new Set(liked.map(j=>j.id));
-    queue = JOKES.filter(j=>!rejected.has(j.id)&&!likedIds.has(j.id));
+    queue = CURATED_JOKES.filter(j=>!rejected.has(j.id)&&!likedIds.has(j.id));
     hide('loading-msg');
     updateUI();
     showNext();
