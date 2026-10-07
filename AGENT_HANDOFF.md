@@ -67,7 +67,7 @@ GitHub Pages 部署為公開倉庫，無需任何 token 設定。
 
 | 已用 | 下一個可用 |
 |------|-----------|
-| a–z、aa、ab、ac、ad、ae | **af**（af001–af040）|
+| a–z、aa、ab、ac、ad、ae<br>專題：sx（sx001–sx710，性笑話大全） | **af**（PTT 批次：af001–af040）|
 
 ---
 
