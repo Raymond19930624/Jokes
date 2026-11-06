@@ -42,6 +42,6 @@ git clone https://github.com/Raymond19930624/Jokes
 { id:"k001", src:"PTT笑話版", cat:"諧音梗", q:"問題", a:"答案" },
 ```
 
-**ID 前綴目前進度：** 已用 a–z、aa–ag，**下一個用 ah**
+**ID 前綴目前進度：** 已用 a–z、aa–ah，**下一個用 ai**
 
 詳細交接說明見 `AGENT_HANDOFF.md`。

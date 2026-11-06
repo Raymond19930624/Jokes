@@ -67,7 +67,7 @@ GitHub Pages 部署為公開倉庫，無需任何 token 設定。
 
 | 已用 | 下一個可用 |
 |------|-----------|
-| a–z、aa、ab、ac、ad、ae、af、ag | **ah**（ah001–ah040）|
+| a–z、aa、ab、ac、ad、ae、af、ag、ah | **ai**（ai001–ai040）|
 
 ---
 
