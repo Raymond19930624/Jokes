@@ -22,8 +22,8 @@ You are taking over this project after a long pause. Do not modify files yet.
 |------|------|
 | 架構 | 單檔 `index.html`，無框架、無建置步驟 |
 | 部署 | GitHub Pages（push to `main` 即自動更新，約 1–2 分鐘生效）|
-| 笑話數 | 1,712 則（精選去重）|
-| 來源 | PTT 笑話板、痞客邦等台灣網路來源（**禁止 AI 生成；每則新增內容須保留原始 URL，且不得與既有笑話重複或太近似**）|
+| 笑話數 | 1,699 則（精選去重）|
+| 來源 | PTT 笑話板、痞客邦等台灣網路來源（**嚴禁 AI 生成；每則新增內容須保留原始 URL，且必須與 index.html 及 Google Sheets 已收藏/已分享之所有內容進行去重比對，嚴禁任何近似或重複笑話**）|
 
 ## 本機開發
 
