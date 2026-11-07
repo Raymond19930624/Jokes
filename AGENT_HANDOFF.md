@@ -56,9 +56,9 @@ GitHub Pages 部署為公開倉庫，無需任何 token 設定。
 
 ### index.html 內部結構
 
-- **笑話資料陣列**：共 1,699 則（精選去重）
+- **笑話資料陣列**：共 1,739 則（精選去重）
 - **各批次分隔**：`// ── X批：...` 注解
-- **下一批插入點**：`ah040` 之後，`const EXCLUDED_LIKED_IDS` 之前
+- **下一批插入點**：`ai040` 之後，`const EXCLUDED_LIKED_IDS` 之前
 - **UI 邏輯**：line 1739 之後
 
 ---
@@ -67,7 +67,7 @@ GitHub Pages 部署為公開倉庫，無需任何 token 設定。
 
 | 已用 | 下一個可用 |
 |------|-----------|
-| a–z、aa、ab、ac、ad、ae、af、ag、ah | **ai**（ai001–ai040）|
+| a–z、aa、ab、ac、ad、ae、af、ag、ah、ai | **aj**（aj001–aj040）|
 
 ---
 
