@@ -161,13 +161,15 @@ html,body{height:100%;overflow:hidden;background:#0d0d0d;color:#f0f0f0;font-fami
 .btn-share.shared{background:rgba(0,120,0,.1);color:#44aa44;border-color:rgba(0,120,0,.3);}
 .btn-share:active{opacity:.7;}
 #no-collection{text-align:center;padding:60px 20px;color:#666;grid-column:1/-1;}
-.share-filter{display:flex;gap:6px;padding:0 16px 10px;flex-shrink:0;}
+.share-filter{display:flex;gap:8px;padding:12px 16px 10px;flex-shrink:0;}
 .share-filter button{
+  flex:1;
   background:rgba(255,255,255,.04);color:#777;border:1px solid rgba(255,255,255,.08);
-  border-radius:99px;padding:5px 14px;cursor:pointer;
-  font-family:inherit;font-size:0.77rem;min-height:33px;touch-action:manipulation;
+  border-radius:99px;padding:8px 14px;cursor:pointer;
+  font-family:inherit;font-size:0.85rem;min-height:38px;touch-action:manipulation;
+  transition:all .15s ease;
 }
-.share-filter button.active{background:rgba(255,255,255,.1);color:#eee;border-color:rgba(255,255,255,.18);}
+.share-filter button.active{background:rgba(255,255,255,.12);color:#ffe135;border-color:rgba(255,225,53,.35);font-weight:700;}
 </style>
 </head>
 <body>
@@ -225,10 +227,8 @@ html,body{height:100%;overflow:hidden;background:#0d0d0d;color:#f0f0f0;font-fami
 
   <!-- COLLECTION -->
   <div id="collection-view">
-    <div id="collection-cats"></div>
     <div class="share-filter">
-      <button id="sf-all" class="active" onclick="setShareFilter('all')">全部</button>
-      <button id="sf-unshared" onclick="setShareFilter('unshared')">未分享 ✨</button>
+      <button id="sf-unshared" class="active" onclick="setShareFilter('unshared')">未分享 ✨</button>
       <button id="sf-shared" onclick="setShareFilter('shared')">已分享 ✅</button>
     </div>
     <div id="collection-grid"></div>
@@ -2193,8 +2193,8 @@ async function apiPost(body){
 
 // ── 狀態 ──────────────────────────────────────────────────────
 let liked=[], rejected=new Set(), queue=[], current=null, revealed=false;
-let pendingSaves=0, currentTab='rate', filterCat='全部';
-let sharedMap={}, shareFilter='all';
+let pendingSaves=0, currentTab='rate';
+let sharedMap={}, shareFilter='unshared';
 
 // ── 初始化 ────────────────────────────────────────────────────
 async function init(){
@@ -2362,23 +2362,43 @@ function switchTab(tab){
   }
 }
 
-function renderCollection(){
-  const cats=['全部',...new Set(liked.map(j=>j.cat))];
-  document.getElementById('collection-cats').innerHTML=cats.map(c=>
-    `<button class="cat-filter${c===filterCat?' active':''}" onclick="setCat('${c.replace(/'/g,"\\'")}')">${c}</button>`
-  ).join('');
+function formatShareDate(d){
+  if(!d) return '';
+  const dt = new Date(d);
+  if(!isNaN(dt.getTime())){
+    return `${dt.getFullYear()}/${dt.getMonth()+1}/${dt.getDate()}`;
+  }
+  return String(d);
+}
 
-  let filtered=filterCat==='全部'?liked:liked.filter(j=>j.cat===filterCat);
-  if(shareFilter==='unshared') filtered=filtered.filter(j=>!sharedMap[j.id]);
-  if(shareFilter==='shared') filtered=filtered.filter(j=>!!sharedMap[j.id]);
+function renderCollection(){
+  const unsharedCount = liked.filter(j=>!sharedMap[j.id]).length;
+  const sharedCount = liked.filter(j=>!!sharedMap[j.id]).length;
+  const btnUnshared = document.getElementById('sf-unshared');
+  const btnShared = document.getElementById('sf-shared');
+  if(btnUnshared) btnUnshared.textContent = `未分享 ✨ (${unsharedCount})`;
+  if(btnShared) btnShared.textContent = `已分享 ✅ (${sharedCount})`;
+
+  let filtered = liked.filter(j => shareFilter === 'shared' ? !!sharedMap[j.id] : !sharedMap[j.id]);
+
+  if(shareFilter === 'shared'){
+    filtered.sort((a,b)=>{
+      const ta = new Date(sharedMap[a.id] || 0).getTime() || 0;
+      const tb = new Date(sharedMap[b.id] || 0).getTime() || 0;
+      return tb - ta; // 最新分享由上到下排序
+    });
+  }
 
   const grid=document.getElementById('collection-grid');
   if(liked.length===0){grid.innerHTML='<div id="no-collection">還沒有收藏，去評分吧！</div>';return;}
-  if(filtered.length===0){grid.innerHTML='<div id="no-collection">這個分類沒有笑話</div>';return;}
+  if(filtered.length===0){
+    grid.innerHTML=`<div id="no-collection">${shareFilter==='shared'?'目前沒有已分享的笑話':'全部收藏都已經分享過囉！'}</div>`;
+    return;
+  }
 
   grid.innerHTML=filtered.map(j=>{
     const isShared=!!sharedMap[j.id];
-    const sharedDate=sharedMap[j.id]||'';
+    const sharedDate=formatShareDate(sharedMap[j.id]);
     const copyText=j.q+'\n\n👉 '+j.a;
     return `
     <div class="joke-card-col${isShared?' shared':''}" id="jc-${j.id}">
@@ -2395,11 +2415,9 @@ function renderCollection(){
   }).join('');
 }
 
-function setCat(c){filterCat=c;renderCollection();}
-
 function setShareFilter(f){
   shareFilter=f;
-  ['all','unshared','shared'].forEach(x=>{
+  ['unshared','shared'].forEach(x=>{
     const el=document.getElementById('sf-'+x);
     if(el) el.classList.toggle('active',x===f);
   });
@@ -2435,16 +2453,16 @@ function toggleShare(id, btn){
     }
     apiPost({action:'unshare',id}).catch(()=>{});
   } else {
-    const today=new Date().toLocaleDateString('zh-TW',{month:'numeric',day:'numeric'});
+    const today = new Date().toISOString().split('T')[0];
     sharedMap[id]=today;
     btn.textContent='✅ 已分享'; btn.classList.add('shared');
     if(card){ card.classList.add('shared');
       const cat=card.querySelector('.jcat');
-      if(cat && !cat.querySelector('span')) cat.innerHTML+=` · <span style="color:#55cc55;font-size:0.62rem">✅ ${today}</span>`;
+      if(cat && !cat.querySelector('span')) cat.innerHTML+=` · <span style="color:#55cc55;font-size:0.62rem">✅ ${formatShareDate(today)}</span>`;
     }
     apiPost({action:'share',id,date:today}).catch(()=>{});
   }
-  if(shareFilter!=='all') setTimeout(()=>renderCollection(),800);
+  setTimeout(()=>renderCollection(),800);
 }
 function show(id){const el=document.getElementById(id);if(el)el.style.display='';}
 function hide(id){const el=document.getElementById(id);if(el)el.style.display='none';}
