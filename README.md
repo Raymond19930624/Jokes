@@ -22,7 +22,7 @@ You are taking over this project after a long pause. Do not modify files yet.
 |------|------|
 | 架構 | 單檔 `index.html`，無框架、無建置步驟 |
 | 部署 | GitHub Pages（push to `main` 即自動更新，約 1–2 分鐘生效）|
-| 笑話數 | 1,739 則（精選去重）|
+| 笑話數 | 1,779 則（精選去重）|
 | 來源 | PTT 笑話板、痞客邦等台灣網路來源（**嚴禁 AI 生成；每則新增內容須保留原始 URL，且必須與 index.html 及 Google Sheets 已收藏/已分享之所有內容進行去重比對，嚴禁任何近似或重複笑話**）|
 
 ## 本機開發
@@ -42,6 +42,6 @@ git clone https://github.com/Raymond19930624/Jokes
 { id:"k001", src:"PTT笑話版", cat:"諧音梗", q:"問題", a:"答案" },
 ```
 
-**ID 前綴目前進度：** 已用 a–z、aa–ai，**下一個用 aj**
+**ID 前綴目前進度：** 已用 a–z、aa–aj，**下一個用 ak**
 
 詳細交接說明見 `AGENT_HANDOFF.md`。
